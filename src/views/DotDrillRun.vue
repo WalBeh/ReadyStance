@@ -68,7 +68,6 @@ const stats = reactive({
   onTime: 0,
   offTime: 0,
   analysisTime: 0,
-  totalCycles: 0,
 })
 
 function randomPosition() {
@@ -107,8 +106,6 @@ async function runDrill() {
     } else {
       stats.offTime += config.dotDuration
     }
-    stats.totalCycles++
-
     // Analysis phase
     phase.value = 'analysis'
     await timer.start(config.analysisDuration)
@@ -128,7 +125,7 @@ async function runDrill() {
   router.push({
     name: 'dot-drill-stats',
     query: {
-      cycles: stats.totalCycles,
+      cycles: config.cycles,
       onTime: stats.onTime,
       offTime: stats.offTime,
       analysisTime: stats.analysisTime,

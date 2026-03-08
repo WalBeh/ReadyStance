@@ -17,7 +17,6 @@ export function useTimer() {
         remaining.value--
         if (remaining.value <= 0) {
           stop()
-          resolve()
         }
       }, 1000)
     })
@@ -35,9 +34,7 @@ export function useTimer() {
     }
   }
 
-  onUnmounted(() => {
-    if (intervalId) clearInterval(intervalId)
-  })
+  onUnmounted(() => stop())
 
   return { remaining, isRunning, start, stop }
 }

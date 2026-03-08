@@ -1,5 +1,5 @@
 <template>
-  <div class="dot-box" ref="boxRef">
+  <div class="dot-box">
     <div
       class="dot"
       :class="isOn ? 'on' : 'off'"

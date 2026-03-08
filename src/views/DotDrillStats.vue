@@ -34,10 +34,10 @@ import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
 
-const cycles = route.query.cycles || 0
-const onTime = route.query.onTime || 0
-const offTime = route.query.offTime || 0
-const analysisTime = route.query.analysisTime || 0
+const cycles = Number(route.query.cycles) || 0
+const onTime = Number(route.query.onTime) || 0
+const offTime = Number(route.query.offTime) || 0
+const analysisTime = Number(route.query.analysisTime) || 0
 
 function restart() {
   router.push('/dot-drill')
