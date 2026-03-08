@@ -12,6 +12,11 @@
         <h3>2 Dot Drill</h3>
         <p>Track two dots with random color combinations</p>
       </div>
+      <div class="playbook-card" @click="$router.push('/two-dot-drill-plus')">
+        <div class="icon">&#11044;&#8644;&#11044;</div>
+        <h3>2 Dot Drill+</h3>
+        <p>Dots switch colors mid-round to test reaction</p>
+      </div>
     </div>
   </div>
 </template>

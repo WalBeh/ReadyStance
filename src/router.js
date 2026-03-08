@@ -4,6 +4,7 @@ import DotDrillSetup from './views/DotDrillSetup.vue'
 import DotDrillRun from './views/DotDrillRun.vue'
 import DotDrillStats from './views/DotDrillStats.vue'
 import TwoDotDrillRun from './views/TwoDotDrillRun.vue'
+import TwoDotDrillPlusRun from './views/TwoDotDrillPlusRun.vue'
 
 const routes = [
   { path: '/', component: HomePage },
@@ -13,6 +14,9 @@ const routes = [
   { path: '/two-dot-drill', component: DotDrillSetup, meta: { title: '2 Dot Drill', runRoute: 'two-dot-drill-run' } },
   { path: '/two-dot-drill/run', name: 'two-dot-drill-run', component: TwoDotDrillRun },
   { path: '/two-dot-drill/stats', name: 'two-dot-drill-stats', component: DotDrillStats, meta: { setupPath: '/two-dot-drill' } },
+  { path: '/two-dot-drill-plus', component: DotDrillSetup, meta: { title: '2 Dot Drill+', runRoute: 'two-dot-drill-plus-run' } },
+  { path: '/two-dot-drill-plus/run', name: 'two-dot-drill-plus-run', component: TwoDotDrillPlusRun },
+  { path: '/two-dot-drill-plus/stats', name: 'two-dot-drill-plus-stats', component: DotDrillStats, meta: { setupPath: '/two-dot-drill-plus' } },
 ]
 
 export default createRouter({
