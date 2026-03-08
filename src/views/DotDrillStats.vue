@@ -1,10 +1,12 @@
 <template>
   <div class="main-content">
-    <h2 class="text-center" style="margin-bottom: 24px">Session Complete</h2>
+    <h2 class="text-center" style="margin-bottom: 24px">
+      {{ stopped ? 'Drill Stopped' : 'Session Complete' }}
+    </h2>
 
     <div class="stat-grid">
       <div class="stat-item">
-        <div class="value">{{ cycles }}</div>
+        <div class="value">{{ cycles }}<span v-if="stopped" class="stat-total"> / {{ totalCycles }}</span></div>
         <div class="label">Cycles</div>
       </div>
       <div class="stat-item">
@@ -35,9 +37,11 @@ const route = useRoute()
 const router = useRouter()
 
 const cycles = Number(route.query.cycles) || 0
+const totalCycles = Number(route.query.totalCycles) || cycles
 const onTime = Number(route.query.onTime) || 0
 const offTime = Number(route.query.offTime) || 0
 const analysisTime = Number(route.query.analysisTime) || 0
+const stopped = route.query.stopped === '1'
 
 function restart() {
   router.push('/dot-drill')
