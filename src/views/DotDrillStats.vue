@@ -44,6 +44,6 @@ const analysisTime = Number(route.query.analysisTime) || 0
 const stopped = route.query.stopped === '1'
 
 function restart() {
-  router.push('/dot-drill')
+  router.push(route.meta.setupPath)
 }
 </script>

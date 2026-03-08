@@ -1,6 +1,6 @@
 <template>
   <div class="main-content">
-    <h2 style="margin-bottom: 16px">Dot Drill Setup</h2>
+    <h2 style="margin-bottom: 16px">{{ route.meta.title }} Setup</h2>
 
     <div class="card">
       <div class="form-group">
@@ -43,8 +43,9 @@
 
 <script setup>
 import { reactive } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
+const route = useRoute()
 const router = useRouter()
 
 const config = reactive({
@@ -56,7 +57,7 @@ const config = reactive({
 
 function startDrill() {
   router.push({
-    name: 'dot-drill-run',
+    name: route.meta.runRoute,
     query: {
       cycles: config.cycles,
       startTimer: config.startTimer,

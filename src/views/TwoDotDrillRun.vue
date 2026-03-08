@@ -6,10 +6,13 @@
     <!-- Dot phase -->
     <template v-if="phase === 'dot'">
       <div class="phase-label">
-        {{ currentIsOn ? 'ON' : 'OFF' }} &mdash; {{ timer.remaining.value }}s
+        {{ dot1On ? 'ON' : 'OFF' }} / {{ dot2On ? 'ON' : 'OFF' }} &mdash; {{ timer.remaining.value }}s
         <span v-if="speedLevel > 0" class="speed-indicator">&times;{{ speedLevel + 1 }}</span>
       </div>
-      <DotBox :x="dotX" :y="dotY" :is-on="currentIsOn" />
+      <DotBox :dots="[
+        { x: dot1X, y: dot1Y, on: dot1On },
+        { x: dot2X, y: dot2Y, on: dot2On },
+      ]" />
       <TimerBar :remaining="timer.remaining.value" :total="effectiveDotDuration" />
       <div class="cycle-counter">Cycle {{ currentCycle }} / {{ config.cycles }}</div>
     </template>
@@ -69,28 +72,43 @@ const config = reactive({
   analysisDuration: parseInt(route.query.analysisDuration) || 5,
 })
 
-const phase = ref('countdown') // countdown | dot | analysis | done
+const phase = ref('countdown')
 const currentCycle = ref(0)
-const currentIsOn = ref(true)
-const dotX = ref(50)
-const dotY = ref(50)
+const dot1On = ref(true)
+const dot2On = ref(true)
+const dot1X = ref(30)
+const dot1Y = ref(50)
+const dot2X = ref(70)
+const dot2Y = ref(50)
 const aborted = ref(false)
-const speedLevel = ref(0) // 0 = normal, 1 = fast, 2 = fastest
+const speedLevel = ref(0)
 
-// Speed reduces dot duration: 0 → full, 1 → 66%, 2 → 33% (min 1s)
 const effectiveDotDuration = computed(() => {
   const factor = [1, 0.66, 0.33][speedLevel.value] || 1
   return Math.max(1, Math.round(config.dotDuration * factor))
 })
 
-// Stats tracking
 const stats = reactive({
   onTime: 0,
   offTime: 0,
   analysisTime: 0,
 })
 
-const randomPosition = createPositionTracker()
+const randomPosition1 = createPositionTracker()
+const randomPosition2 = createPositionTracker()
+
+function randomizeDots() {
+  const pos1 = randomPosition1()
+  dot1X.value = pos1.x
+  dot1Y.value = pos1.y
+
+  const pos2 = randomPosition2(pos1.x, pos1.y)
+  dot2X.value = pos2.x
+  dot2Y.value = pos2.y
+
+  dot1On.value = Math.random() > 0.5
+  dot2On.value = Math.random() > 0.5
+}
 
 function stopDrill() {
   aborted.value = true
@@ -107,7 +125,7 @@ function increaseSpeed() {
 
 function navigateToStats() {
   router.push({
-    name: 'dot-drill-stats',
+    name: 'two-dot-drill-stats',
     query: {
       cycles: currentCycle.value,
       totalCycles: config.cycles,
@@ -120,41 +138,32 @@ function navigateToStats() {
 }
 
 async function runDrill() {
-  // Ensure audio context is ready (needs user gesture)
   ensureAudioContext()
 
-  // Start countdown
   phase.value = 'countdown'
   await timer.start(config.startTimer)
   if (aborted.value) { navigateToStats(); return }
 
-  // Beep after countdown
   playGymBeep()
-
-  // Wait for beep to finish
   await new Promise((r) => setTimeout(r, 1000))
   if (aborted.value) { navigateToStats(); return }
 
-  // Run cycles
   for (let i = 1; i <= config.cycles; i++) {
     if (aborted.value) break
     currentCycle.value = i
 
     // Dot phase
     phase.value = 'dot'
-    currentIsOn.value = Math.random() > 0.5
-    const pos = randomPosition()
-    dotX.value = pos.x
-    dotY.value = pos.y
+    randomizeDots()
 
     const dotDur = effectiveDotDuration.value
     await timer.start(dotDur)
 
-    if (currentIsOn.value) {
-      stats.onTime += dotDur
-    } else {
-      stats.offTime += dotDur
-    }
+    // Track stats per dot
+    if (dot1On.value) stats.onTime += dotDur
+    else stats.offTime += dotDur
+    if (dot2On.value) stats.onTime += dotDur
+    else stats.offTime += dotDur
 
     if (aborted.value) break
 
@@ -165,15 +174,11 @@ async function runDrill() {
 
     if (aborted.value) break
 
-    // Beep when analysis ends
     playGymBeep()
-
-    // Brief pause between beep and next cycle
     await new Promise((r) => setTimeout(r, 1000))
     if (aborted.value) break
   }
 
-  // Done
   phase.value = 'done'
   await new Promise((r) => setTimeout(r, 500))
   navigateToStats()
