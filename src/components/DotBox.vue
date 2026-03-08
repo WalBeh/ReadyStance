@@ -1,17 +1,27 @@
 <template>
   <div class="dot-box">
     <div
+      v-for="(dot, i) in resolvedDots"
+      :key="i"
       class="dot"
-      :class="isOn ? 'on' : 'off'"
-      :style="{ left: x + '%', top: y + '%' }"
+      :class="dot.on ? 'on' : 'off'"
+      :style="{ left: dot.x + '%', top: dot.y + '%' }"
     />
   </div>
 </template>
 
 <script setup>
-defineProps({
-  x: { type: Number, required: true },
-  y: { type: Number, required: true },
-  isOn: { type: Boolean, required: true },
+import { computed } from 'vue'
+
+const props = defineProps({
+  dots: { type: Array, default: null },
+  x: { type: Number, default: 50 },
+  y: { type: Number, default: 50 },
+  isOn: { type: Boolean, default: true },
+})
+
+const resolvedDots = computed(() => {
+  if (props.dots) return props.dots
+  return [{ x: props.x, y: props.y, on: props.isOn }]
 })
 </script>
