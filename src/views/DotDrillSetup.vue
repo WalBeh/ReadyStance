@@ -5,22 +5,34 @@
     <div class="card">
       <div class="form-group">
         <label>Number of Cycles</label>
-        <input type="number" v-model.number="config.cycles" min="1" max="100" />
+        <div class="slider-row">
+          <input type="range" v-model.number="config.cycles" min="1" max="50" class="slider" />
+          <span class="slider-value">{{ config.cycles }}</span>
+        </div>
       </div>
 
       <div class="form-group">
         <label>Start Countdown (seconds)</label>
-        <input type="number" v-model.number="config.startTimer" min="1" max="30" />
+        <div class="slider-row">
+          <input type="range" v-model.number="config.startTimer" min="1" max="15" class="slider" />
+          <span class="slider-value">{{ config.startTimer }}s</span>
+        </div>
       </div>
 
       <div class="form-group">
         <label>ON/OFF Duration (seconds)</label>
-        <input type="number" v-model.number="config.dotDuration" min="1" max="30" />
+        <div class="slider-row">
+          <input type="range" v-model.number="config.dotDuration" min="1" max="15" class="slider" />
+          <span class="slider-value">{{ config.dotDuration }}s</span>
+        </div>
       </div>
 
       <div class="form-group">
         <label>Analysis Duration (seconds)</label>
-        <input type="number" v-model.number="config.analysisDuration" min="1" max="60" />
+        <div class="slider-row">
+          <input type="range" v-model.number="config.analysisDuration" min="1" max="30" class="slider" />
+          <span class="slider-value">{{ config.analysisDuration }}s</span>
+        </div>
       </div>
     </div>
 
