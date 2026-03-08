@@ -37,10 +37,10 @@
 
     <!-- Drill controls (visible during dot and analysis phases) -->
     <div v-if="phase === 'dot' || phase === 'analysis'" class="drill-controls">
-      <button class="btn-drill btn-speed" @click="increaseSpeed" :disabled="phase !== 'dot' && phase !== 'analysis'">
+      <button class="btn btn-drill btn-speed" @click="increaseSpeed">
         &#9889; Speed{{ speedLevel > 0 ? ' ×' + (speedLevel + 1) : '' }}
       </button>
-      <button class="btn-drill btn-stop" @click="stopDrill">
+      <button class="btn btn-drill btn-stop" @click="stopDrill">
         &#9632; Stop
       </button>
     </div>
@@ -76,9 +76,10 @@ const dotY = ref(50)
 const aborted = ref(false)
 const speedLevel = ref(0) // 0 = normal, 1 = fast, 2 = fastest
 
-// Speed reduces dot duration: 0 → full, 1 → 66%, 2 → 33% (min 1s)
+const SPEED_FACTORS = { 0: 1, 1: 0.66, 2: 0.33 }
+
 const effectiveDotDuration = computed(() => {
-  const factor = [1, 0.66, 0.33][speedLevel.value] || 1
+  const factor = SPEED_FACTORS[speedLevel.value] ?? 1
   return Math.max(1, Math.round(config.dotDuration * factor))
 })
 
@@ -97,7 +98,7 @@ function randomPosition() {
   let bestX, bestY, bestDist = -1
 
   // Try several candidates and pick the one farthest from recent positions
-  for (let attempt = 0; attempt < 20; attempt++) {
+  for (let attempt = 0; attempt < 8; attempt++) {
     const candidateX = 10 + Math.random() * 80
     const candidateY = 10 + Math.random() * 80
 
@@ -141,11 +142,7 @@ function stopDrill() {
 }
 
 function increaseSpeed() {
-  if (speedLevel.value < 2) {
-    speedLevel.value++
-  } else {
-    speedLevel.value = 0
-  }
+  speedLevel.value = (speedLevel.value + 1) % 3
 }
 
 function navigateToStats() {
@@ -173,8 +170,7 @@ async function runDrill() {
 
   // Beep after countdown
   playGymBeep()
-
-  // Wait for beep to finish
+  if (aborted.value) { navigateToStats(); return }
   await new Promise((r) => setTimeout(r, 1000))
   if (aborted.value) { navigateToStats(); return }
 
@@ -208,8 +204,7 @@ async function runDrill() {
 
     // Beep when analysis ends
     playGymBeep()
-
-    // Brief pause between beep and next cycle
+    if (aborted.value) break
     await new Promise((r) => setTimeout(r, 1000))
     if (aborted.value) break
   }

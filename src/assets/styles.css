@@ -415,21 +415,8 @@ body {
 
 .btn-drill {
   flex: 1;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   padding: 12px 16px;
-  border: none;
-  border-radius: 10px;
   font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
-  touch-action: manipulation;
-}
-
-.btn-drill:active {
-  transform: scale(0.95);
 }
 
 .btn-stop {

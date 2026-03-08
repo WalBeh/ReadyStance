@@ -3,35 +3,17 @@
     <h2 style="margin-bottom: 16px">Dot Drill Setup</h2>
 
     <div class="card">
-      <div class="form-group">
-        <label>Number of Cycles</label>
+      <div v-for="field in fields" :key="field.key" class="form-group">
+        <label>{{ field.label }}</label>
         <div class="slider-row">
-          <input type="range" v-model.number="config.cycles" min="1" max="50" class="slider" />
-          <span class="slider-value">{{ config.cycles }}</span>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Start Countdown (seconds)</label>
-        <div class="slider-row">
-          <input type="range" v-model.number="config.startTimer" min="1" max="15" class="slider" />
-          <span class="slider-value">{{ config.startTimer }}s</span>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>ON/OFF Duration (seconds)</label>
-        <div class="slider-row">
-          <input type="range" v-model.number="config.dotDuration" min="1" max="15" class="slider" />
-          <span class="slider-value">{{ config.dotDuration }}s</span>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Analysis Duration (seconds)</label>
-        <div class="slider-row">
-          <input type="range" v-model.number="config.analysisDuration" min="1" max="30" class="slider" />
-          <span class="slider-value">{{ config.analysisDuration }}s</span>
+          <input
+            type="range"
+            v-model.number="config[field.key]"
+            :min="field.min"
+            :max="field.max"
+            class="slider"
+          />
+          <span class="slider-value">{{ config[field.key] }}{{ field.suffix }}</span>
         </div>
       </div>
     </div>
@@ -46,6 +28,13 @@ import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+
+const fields = [
+  { key: 'cycles', label: 'Number of Cycles', min: 1, max: 50, suffix: '' },
+  { key: 'startTimer', label: 'Start Countdown (seconds)', min: 1, max: 15, suffix: 's' },
+  { key: 'dotDuration', label: 'ON/OFF Duration (seconds)', min: 1, max: 15, suffix: 's' },
+  { key: 'analysisDuration', label: 'Analysis Duration (seconds)', min: 1, max: 30, suffix: 's' },
+]
 
 const config = reactive({
   cycles: 10,
