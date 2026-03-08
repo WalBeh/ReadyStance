@@ -24,8 +24,9 @@ function playBeep(frequency, duration, startTime) {
 }
 
 export function useSound() {
-  function playGymBeep() {
+  async function playGymBeep() {
     const ctx = getAudioContext()
+    if (ctx.state === 'suspended') await ctx.resume()
     const now = ctx.currentTime
 
     // 3 short beeps + 1 long beep: pi-pi-pi-piiiip
